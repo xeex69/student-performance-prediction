@@ -1,8 +1,21 @@
-# Load model
+import streamlit as st
+import pickle
+import pandas as pd
+
+st.set_page_config(page_title="Student Performance Prediction")
+
+st.title("🎓 Student Performance Prediction")
+st.write("Predict final student grade (G3)")
+
+# Load trained model
 model = pickle.load(open("notebook/student_performance_model.pkl", "rb"))
 
-# IMPORTANT: feature names used during training
-feature_names = model.feature_names_in_
+# EXACT feature list used during training
+FEATURES = [
+    'age', 'Medu', 'Fedu', 'traveltime', 'studytime', 'failures',
+    'famrel', 'freetime', 'goout', 'Dalc', 'Walc',
+    'health', 'absences', 'G1', 'G2'
+]
 
 # User inputs
 studytime = st.slider("Study Time (1–4)", 1, 4, 2)
@@ -12,10 +25,10 @@ G1 = st.slider("First Period Grade (G1)", 0, 20, 10)
 G2 = st.slider("Second Period Grade (G2)", 0, 20, 10)
 
 if st.button("Predict Final Grade"):
-    # Create empty input with all features
-    input_data = pd.DataFrame(0, index=[0], columns=feature_names)
+    # Create input row with default values
+    input_data = pd.DataFrame([[0]*len(FEATURES)], columns=FEATURES)
 
-    # Fill only known features
+    # Fill known values
     input_data["studytime"] = studytime
     input_data["failures"] = failures
     input_data["absences"] = absences
